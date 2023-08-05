@@ -16,6 +16,7 @@ private:
     int* tempArray;
     int* BMNext;
     int patternPosition;
+    bool* patternArray;
 public:
     BoyerMoore(const string &text, const string &pattern);
 
@@ -36,6 +37,8 @@ public:
     int optimalOffset(int i, int j);
 
     void algorithm();
+
+    void patternSelection(int i);
 };
 
 

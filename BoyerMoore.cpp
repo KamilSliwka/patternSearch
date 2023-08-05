@@ -1,15 +1,20 @@
 //
 // Created by kamil on 02.08.2023.
 //
-
+#include <iostream>
+#include <windows.h>
 #include "BoyerMoore.h"
 #define NUMBEROFCHARINASCII 256
+
+using namespace std;
+
 BoyerMoore::BoyerMoore(const string &text, const string &pattern) : text(text), pattern(pattern) {
     int m=pattern.length();
     Last = new int[NUMBEROFCHARINASCII];
     tempArray = new int[m+1];
     BMNext = new int[m+1];
     patternPosition = -1;
+    patternArray = new bool[text.length()];
 }
 
 void BoyerMoore::patternSearch() {
@@ -28,6 +33,10 @@ void BoyerMoore::initialization() {
     for(int k=0;k<pattern.length();k++){
         Last[pattern[k]]=k;
     }
+    for(int k=0;k<text.length();k++){
+        patternArray[k]=false;
+    }
+
 }
 
 void BoyerMoore::goodSuffixHeuristics(){
@@ -76,22 +85,38 @@ void BoyerMoore::algorithm(){
             j--;
         }
         if(j==-1){
-            positionOfPattern(i);
+           patternSelection(i);
             i=i+BMNext[0];
-            //i++;
         }
         else {
             i = i + optimalOffset(i,j);
         }
     }
    isPattern();
+    for(int i=0;i<text.length();i++){
+        HANDLE hOut;
+        hOut = GetStdHandle( STD_OUTPUT_HANDLE );
+        SetConsoleTextAttribute( hOut,  FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+        if(patternArray[i]==true){
+            SetConsoleTextAttribute( hOut, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
+            cout << text[i];
+        }else {
+            cout << text[i];
+        }
+    }
 }
 
 void BoyerMoore::positionOfPattern(int i){
     cout<<"index of the beginning of the pattern: "<<endl;
     patternPosition=i;
     cout << patternPosition << endl;
+}
 
+void BoyerMoore::patternSelection(int i){
+    positionOfPattern(i);
+    for(int l=0;l<pattern.length();l++){
+        patternArray[i+l]=true;
+    }
 }
 
 int BoyerMoore::optimalOffset(int i,int j){
